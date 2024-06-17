@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import bcrypt from 'bcryptjs';
+import userData from '../path/to/users.json';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -14,12 +16,18 @@ const LoginPage = () => {
     setPassword(e.target.value);
   };
 
+  const validateUser = (username, password) => {
+    const user = userData.find(u => u.username === username);
+    if (!user) return false;
+    return bcrypt.compareSync(password, user.passwordHash);
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'password') {
+    if (validateUser(username, password)) {
       console.log('Login successful');
       alert('Login successful! Redirecting...');
-      router.push('/dashboard'); // Redirect to the dashboard page
+      // Add routing logic here
     } else {
       console.log('Login failed');
       alert('Invalid username or password');
