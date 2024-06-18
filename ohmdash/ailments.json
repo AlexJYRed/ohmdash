@@ -1,1 +1,37 @@
-[{"ailmentID":"ChargeNet-2-1","siteID":"ChargeNet-TacoBell Newark","clientID":"ChargeNet","inspectionID":"ChargeNet-2","chargerID":"ChargeNet-TacoBell Newark-unlabeled (station 2)","min_service_level":3,"ailment_type":"Plug_Left_Port","ailment_desc":"Broken (External)","ailment_image":"https://s3.eu-central-1.amazonaws.com/onefid.content.assets/qfbfnlrotfamhhhq/mobile/6722654/6a5fc5b65e0ce43eb187725cce227ded/32D2F249_0FE3_440A_9B6C_0BCD32AA95EB_fb673a94-a9ac-44ed-a86e-b7223cf508ab.jpg","resolved_flag":false,"partID":null,"date_created":1717535983,"date_resolved":null,"identified_technicianID":6722654,"resolved_technicianID":null}]
+[
+    {
+      "ailmentID": "ChargeNet-2-1",
+      "siteID": "ChargeNet-TacoBell Newark",
+      "clientID": "ChargeNet",
+      "inspectionID": "ChargeNet-2",
+      "chargerID": "ChargeNet-TacoBell Newark-unlabeled (station 2)",
+      "min_service_level": 3,
+      "ailment_type": "Plug_Left_Port",
+      "ailment_desc": "Broken (External)",
+      "ailment_image": "https://s3.eu-central-1.amazonaws.com/onefid.content.assets/qfbfnlrotfamhhhq/mobile/6722654/6a5fc5b65e0ce43eb187725cce227ded/32D2F249_0FE3_440A_9B6C_0BCD32AA95EB_fb673a94-a9ac-44ed-a86e-b7223cf508ab.jpg",
+      "resolved_flag": false,
+      "partID": null,
+      "date_created": 1717535983,
+      "date_resolved": null,
+      "identified_technicianID": 6722654,
+      "resolved_technicianID": null
+    },
+    {
+      "ailmentID": "Admin-1",
+      "siteID": "Admin HQ",
+      "clientID": "AdminClient",
+      "inspectionID": "Admin-Inspection-1",
+      "chargerID": "Admin-HQ-Charger-001",
+      "min_service_level": 2,
+      "ailment_type": "Software Issue",
+      "ailment_desc": "Firmware update failed, requires manual reset",
+      "ailment_image": "https://media.istockphoto.com/id/637743724/vector/dont-know-emoticon.jpg?s=612x612&w=0&k=20&c=bgCsI_wV-zRvFubr7SMeww-EMybuMzKwF1PvuYaKuvw=",
+      "resolved_flag": false,
+      "partID": "FW12345",
+      "date_created": 1717536983,
+      "date_resolved": null,
+      "identified_technicianID": 9999999,
+      "resolved_technicianID": null
+    }
+  ]
+  

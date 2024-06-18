@@ -32,15 +32,3 @@ body {
   }
 }
 
-.menu-button {
-  font-size: 24px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out; /* Smooth transition */
-}
-
-.menu-button-shifted {
-  transform: translateX(250px); /* Move button to the right */
-}

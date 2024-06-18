@@ -1,64 +1,55 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import bcrypt from 'bcryptjs';
-import userData from '../path/to/users.json';
+import { createClient } from '@supabase/supabase-js';
 
-const LoginPage = () => {
+// Assuming you have these stored in environment variables or some config
+const supabaseUrl = 'https://your-supabase-url.supabase.co';
+const supabaseKey = 'your-supabase-key';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default function Login({ setToken }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // Initialize the router
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)  
+      .single();
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const validateUser = (username, password) => {
-    const user = userData.find(u => u.username === username);
-    if (!user) return false;
-    return bcrypt.compareSync(password, user.passwordHash);
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateUser(username, password)) {
-      console.log('Login successful');
-      alert('Login successful! Redirecting...');
-      // Add routing logic here
+    if (error) {
+      alert('Login failed!');
+      console.error('Login error:', error);
     } else {
-      console.log('Login failed');
-      alert('Invalid username or password');
+      setToken(user.token);  // Assuming the token is stored in the user record
+      console.log('Logged in:', user);
     }
-  };
+  }
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <div>
-          <label htmlFor="username">Username</label>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Username:
           <input
             type="text"
-            id="username"
             value={username}
-            onChange={handleUsernameChange}
+            onChange={e => setUsername(e.target.value)}
           />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
+        </label>
+        <label>
+          Password:
           <input
             type="password"
-            id="password"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={e => setPassword(e.target.value)}
           />
-        </div>
-        <button type="submit">Login</button>
+        </label>
+        <button type="submit">Log In</button>
       </form>
     </div>
   );
-};
-
-export default LoginPage;
+}
