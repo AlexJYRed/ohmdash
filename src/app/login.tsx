@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
 
 // Assuming you have these stored in environment variables or some config
 const supabaseUrl = 'https://your-supabase-url.supabase.co';
 const supabaseKey = 'your-supabase-key';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default function Login({ setToken }) {
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -23,8 +25,9 @@ export default function Login({ setToken }) {
       alert('Login failed!');
       console.error('Login error:', error);
     } else {
-      setToken(user.token);  // Assuming the token is stored in the user record
-      console.log('Logged in:', user);
+      localStorage.setItem('username', username);
+      localStorage.setItem('password', password);
+      router.push('/');  // Redirect to the homepage or dashboard
     }
   }
 

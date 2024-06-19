@@ -15,3 +15,5 @@ const useAuth = () => {
 
   return !!token;
 };
+
+export default useAuth;

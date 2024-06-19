@@ -1,5 +1,5 @@
 import { AppProps } from 'next/app';
-import useAuth from './hooks/auth'; // Adjust the path based on where you place the hook
+import useAuth from '../hooks/auth';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const isAuthenticated = useAuth();

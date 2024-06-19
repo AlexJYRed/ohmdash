@@ -1,9 +1,7 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import users from '/users.json'; 
 
 // Supabase client setup
 const supabaseUrl = 'https://your-supabase-url.supabase.co';
@@ -21,70 +19,73 @@ type Inspection = {
 };
 
 async function verifyCredentials(username: string | null, password: string | null) {
+  console.log('Verifying credentials');
   if (!username || !password) return false;
 
-  // Convert the password string to a Uint8Array
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
-
-  // Hash the password using SHA-512
   const hashBuffer = await crypto.subtle.digest('SHA-512', data);
-
-  // Convert the ArrayBuffer to a hex string
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-  // Compare the generated hash with the stored hash
-  return users.some(user => user.username === username && user.passwordHash === hashHex);
+  const isAuthenticated = users.some(user => user.username === username && user.passwordHash === hashHex);
+  console.log('Credentials verified:', isAuthenticated);
+  return isAuthenticated;
 }
 
 export default function Home() {
   const [inspections, setInspections] = useState<Inspection[]>([]);
-  const [selectedSite, setSelectedSite] = useState<string | null>(null);
-  const [selectedCharger, setSelectedCharger] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
+    console.log('Component mounted, router is ready:', router.isReady);
     if (!router.isReady) return;
-    const fetchInspections = async () => {
-      const { data: inspections, error } = await supabase
-        .from('inspections')
-        .select('*');
 
-      if (error) console.error('Error fetching inspections:', error);
-      else setInspections(inspections as Inspection[]);
-    };
-    async function checkAuth() {
-      const storedUsername = localStorage.getItem('username');
-      const storedPassword = localStorage.getItem('password');
-  
-      const isAuthenticated = await verifyCredentials(storedUsername, storedPassword);
-      
-      if (!isAuthenticated) {
-        router.push('/login');
-      } else {
-        fetchInspections();
+    async function checkAuthAndFetchData() {
+      try {
+        console.log('Checking authentication and fetching data...');
+        const storedUsername = localStorage.getItem('username');
+        const storedPassword = localStorage.getItem('password');
+        console.log(`Retrieved from localStorage - Username: ${storedUsername}, Password: ${storedPassword}`);
+    
+        if (!storedUsername || !storedPassword) {
+          console.log('No credentials stored, redirecting to login...');
+          router.push('/login');
+          return;
+        }
+    
+        const isAuthenticated = await verifyCredentials(storedUsername, storedPassword);
+        console.log(`Is authenticated: ${isAuthenticated}`);
+    
+        if (!isAuthenticated) {
+          console.log('Authentication failed, redirecting to login');
+          router.push('/login');
+        } else {
+          console.log('Fetching inspections');
+          const { data: inspections, error } = await supabase.from('inspections').select('*');
+          if (error) {
+            console.error('Error fetching inspections:', error);
+          } else {
+            setInspections(inspections as Inspection[]);
+            console.log('Inspections fetched:', inspections);
+          }
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error during authentication or data fetching:', error);
       }
-    }
-    checkAuth();
+    }    
+
+    checkAuthAndFetchData();
   }, [router.isReady]);
 
-  const handleSiteChange = (site: string) => {
-    setSelectedSite(site);
-    setSelectedCharger(null);
-  };
+  if (loading) {
+    console.log('Displaying loading screen');
+    return <div>Loading...</div>;
+  }
 
-  const handleChargerChange = (charger: string) => {
-    setSelectedCharger(charger);
-  };
-
-  const filteredInspections = inspections.filter(inspection => {
-    if (selectedSite && inspection.site !== selectedSite) return false;
-    if (selectedCharger && inspection.charger !== selectedCharger) return false;
-    return true;
-  });
-
+  console.log('Rendering dashboard with data');
   return (
     <div className="container">
       <header>
