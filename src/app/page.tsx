@@ -31,19 +31,18 @@ type Ailment = {
 };
 
 
-
-
 export default function Home() {
   const [ailmentsData, setAilmentsData] = useState<Ailment[]>([]);
   const [selectedChargerID, setSelectedChargerID] = useState(null);
-  const [filteredAilments, setFilteredAilments] = useState<Ailment[]>([]);
+  const [siteAilments, setSiteAilments] = useState<Ailment[]>([]);
   const [chargerIssueCount, setChargerIssueCount] = useState(0);
   const [selectedSite, setSelectedSite] = useState('');
   const [sitesWithIssues, setSitesWithIssues] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const storedUsername = localStorage.getItem('username');
+  const storedUsername = 'admin';
+  //localStorage.getItem('username');
 
   const chargerImages = {
     "Admin-HQ-Charger-002": "https://m.media-amazon.com/images/I/61qyH+7K6AL._AC_UF894,1000_QL80_.jpg",
@@ -98,7 +97,7 @@ export default function Home() {
       const chargersWithIssues = new Set(issuesAtSite.map(ailment => ailment.chargerID));
       setChargerIssueCount(chargersWithIssues.size); 
       console.log("Issues at site: ", issuesAtSite); // Check if this returns the correct issues
-      setFilteredAilments(issuesAtSite);
+      setSiteAilments(issuesAtSite);
     }
 
 
@@ -116,43 +115,14 @@ export default function Home() {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const handleSiteChange = (event) => {
-    setSelectedSite(event.target.value);
-    setSelectedCharger(null);  // Reset charger selection when site changes
-    console.log("Site selected:", event.target.value);
-  };
   
   const chargerOptions = ailmentsData
     .filter(ailment => ailment.siteID === selectedSite)
     .map(ailment => ailment.chargerID)
     .filter((value, index, self) => self.indexOf(value) === index);
   
-  const handleChargerChange = (event) => {
-    setSelectedCharger(event.target.value);
-    console.log("Charger selected:", event.target.value);
-    };
-
   return (
     <div className="container">
-      <header>
-        <button
-          className={`menu-button ${sidebarOpen ? 'menu-button-shifted' : ''}`}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >☰</button>
-        <h1>OhmEV Dashboard - Welcome, {storedUsername}</h1>
-        <button onClick={handleLogout} className="logout-button">Logout</button> {/* Logout button */}
-      </header>
-      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <nav>
-          <ul>
-            <li>Overview</li>
-            <li>Details</li>
-            <li>Maintenance</li>
-            <li>Settings</li>
-          </ul>
-        </nav>
-      </div>
       <main>
       <SummaryStats data={summaryData} />
       <div className="site-selection">
@@ -161,7 +131,7 @@ export default function Home() {
         <div className="charger-grid">
           {selectedSite && (
             <ChargerGrid
-              ailments={filteredAilments}
+              ailments={siteAilments}
               onSelectCharger={handleChargerSelection}
             />
           )}
@@ -180,7 +150,7 @@ export default function Home() {
         <div className="info-box">
           <h2>Recent Activity</h2>
           <ul>
-            {filteredAilments.map(ailment => (
+            {siteAilments.map(ailment => (
               <li key={ailment.id}>
                 {ailment.date}: {ailment.issue} - {ailment.resolved ? 'Resolved' : 'Outstanding'}
               </li>
@@ -263,11 +233,6 @@ export default function Home() {
   min-height: 300px; // Minimum height for layout stability
   border-left: 1px solid black; // Separate columns visually
 }
-//   .charger-grid {
-//   display: flex;
-//   flex-wrap: wrap;
-//   gap: 10px;
-// }
         .filters {
           display: flex;
           gap: 10px;

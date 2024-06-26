@@ -1,1 +1,1 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/alexyansouni/Desktop/Personal/OhmEV/ohmdash/src/app/layout\":[\"static/media/c9a5bc6a7c948fb0-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
+self.__NEXT_FONT_MANIFEST="{\"pages\":{\"/sites/[siteId]\":[\"static/media/c9a5bc6a7c948fb0-s.p.woff2\"]},\"app\":{\"/Users/alexyansouni/Desktop/Personal/OhmEV/ohmdash/src/app/layout\":[\"static/media/c9a5bc6a7c948fb0-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":true}"

@@ -1,34 +1,98 @@
+/* Tailwind Base, Components, and Utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Root color scheme */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --primary-color: #333;
+  --secondary-color: #555;
+  --accent-color: #0070f3;
+  --font-color: #333;
+  --background-color: #f0f0f0;
+  --link-color: #0070f3;
+  --header-bg-color: #ffffff;
+  --sidebar-bg-color: #333;
+  --sidebar-text-color: #ccc;
+  --menu-button-color: #fff;
 }
 
+/* Light/Dark mode configurations */
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --primary-color: #ccc;
+    --secondary-color: #888;
+    --font-color: #fff;
+    --background-color: #121212;
+    --header-bg-color: #333;
+    --sidebar-bg-color: #222;
+    --sidebar-text-color: #fff;
+    --menu-button-color: #fff;
   }
 }
 
+/* Basic body styling */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--background-color);
+  color: var(--font-color);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Link styling */
+a {
+  color: var(--link-color);
+  text-decoration: none;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
+/* Reusable utility classes */
+.text-center {
+  text-align: center;
+}
+
+.padding-1 {
+  padding: 1rem;
+}
+
+.margin-1 {
+  margin: 1rem;
+}
+
+/* Structural layouts */
+.header {
+  background-color: var(--header-bg-color);
+  color: var(--font-color);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--sidebar-bg-color);
+  color: var(--sidebar-text-color);
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: var(--menu-button-color);
+  cursor: pointer;
+  font-size: 2rem;
+}
+
+/* Main content area */
+.main-content {
+  margin-left: 250px; /* Same as sidebar width */
+  padding: 1rem;
+}

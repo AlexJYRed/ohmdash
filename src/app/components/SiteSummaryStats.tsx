@@ -1,11 +1,17 @@
-const SiteSummaryStats = ({ site, chargerIssueCount }) => {
-    return (
-      <div style={{ border: '1px solid black', padding: '10px', flex: 1 }}>
-        <h2>{site}</h2>
-        <p>Total Chargers with Issues: {chargerIssueCount}</p>
-      </div>
-    );
-  };
-  
-  export default SiteSummaryStats;
-  
+// Inside SiteSummaryStats component or wherever the link is needed
+import Link from 'next/link';
+import ailments from '../../../ailments.json';
+
+const SiteSummaryStats = ({ site }) => {
+  return (
+    <div>
+      <h2>{site} - Summary</h2>
+      {/* Site summary stats here */}
+      <Link href={`/sites/${site}`}>
+        View Details
+      </Link>
+    </div>
+  );
+};
+
+export default SiteSummaryStats;
