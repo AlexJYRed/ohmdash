@@ -1,171 +1,84 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import users from '../../users.json';
-import ailments from '../../ailments.json';
+import ailmentsData from '../../ailments.json';
 import ChargerDetails from "./components/ChargerDetails";
 import SummaryStats from './components/SummaryStats';
-import SiteListView from './components/SiteListView'; // This will be a new component
+import SiteListView from './components/SiteListView';
 import SiteSummaryStats from "./components/SiteSummaryStats";
 import ChargerGrid from './components/ChargerGrid';
 
-type Ailment = {
-  ailmentID: string;
-  siteID: string;
-  chargerID: string;
-  status: string;
-  date: string;
-  issue: string;
-  resolved: boolean;
-  clientID: string;
-  ailment_type: string;
-  ailment_desc: string;
-  ailment_image: string;
-  resolved_flag: boolean;
-  functionality: boolean;
-  partID?: string;
-  date_created: number;
-  date_resolved: number | null;
-  identified_technicianID: number;
-  resolved_technicianID?: number;
-};
-
-
-export default function Home() {
-  const [ailmentsData, setAilmentsData] = useState<Ailment[]>([]);
-  const [selectedChargerID, setSelectedChargerID] = useState(null);
-  const [siteAilments, setSiteAilments] = useState<Ailment[]>([]);
-  const [chargerIssueCount, setChargerIssueCount] = useState(0);
-  const [selectedSite, setSelectedSite] = useState('');
-  const [sitesWithIssues, setSitesWithIssues] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+const Home = () => {
   const router = useRouter();
-  const storedUsername = 'admin';
-  //localStorage.getItem('username');
+  const [selectedChargerID, setSelectedChargerID] = useState(null);
+  const [selectedSite, setSelectedSite] = useState('');
+  const [userData, setUserData] = useState({
+    ailments: [],
+    sitesWithIssues: [],
+    chargerIssueCount: 0,
+    siteAilments: []
+  });
+  const [loading, setLoading] = useState(true);
+  const storedUsername = localStorage.getItem('username');
 
-  const chargerImages = {
-    "Admin-HQ-Charger-002": "https://m.media-amazon.com/images/I/61qyH+7K6AL._AC_UF894,1000_QL80_.jpg",
-    "Admin-Second-Site-Charger-001": "https://www.cnet.com/a/img/resize/e8aca7d90e5a230e42be7262df1dfa76163e67d5/hub/2022/03/07/64ae327b-4478-4893-b46b-49a15920a35e/dsc02028.jpg?auto=webp&width=1920",
-    "Admin-HQ-Charger-003": "https://cyberswitching.com/wp-content/uploads/2022/06/Dual-Charger-scaled-e1656358174762.jpg",
-    "Admin-HQ-Charger-001": "https://m.media-amazon.com/images/I/61ZBEiQ1EVL.jpg",
-    "Admin-Second-Site-Charger-002": "https://evocharge.com/wp-content/uploads/2021/02/GettyImages-1249775796.jpg",
-    "Admin-Second-Site-Charger-003": "https://m.media-amazon.com/images/I/71exSgr9XWL._AC_UF894,1000_QL80_.jpg",
-  };
-
-  const summaryData = {
-    totalIssues: 9,
-    chargersDown: 2,
-    uptime: '93%',
-    lastSiteIssueTime: 'Yesterday 16:24'
-  };
-
-  const handleChargerSelection = (chargerID) => {
-    console.log("Selected Charger:", chargerID);
-    setSelectedChargerID(chargerID); // To use for displaying the full biography
-  };
-  
   useEffect(() => {
     if (!storedUsername) {
       router.push('/login');
       return;
     }
-  
-    // Filter ailments based on the logged-in user's clientID
-    const userAilments = ailments.filter(ailment => ailment.clientID === storedUsername);
-  
+
+    const userAilments = ailmentsData.filter(ailment => ailment.clientID === storedUsername);
+
     // Aggregate issue counts per site
-    const siteIssueCounts = userAilments.reduce((acc, ailment) => {
-      const siteKey = ailment.siteID; // Correcting to 'site' from 'siteID'
-      if (acc[siteKey]) {
-        acc[siteKey]++;
-      } else {
-        acc[siteKey] = 1;
-      }
-      return acc;
-    }, {});
-  
-    // Transform the object into an array suitable for the SiteListView component
+    const siteIssueCounts = {};
+    userAilments.forEach(ailment => {
+      siteIssueCounts[ailment.siteID] = (siteIssueCounts[ailment.siteID] || 0) + 1;
+    });
+
+    // Create list of sites with issues
     const sites = Object.keys(siteIssueCounts).map(siteID => ({
       siteID,
       issues: siteIssueCounts[siteID]
     }));
-    setSitesWithIssues(sites);
 
-    if (selectedSite) {
-      const issuesAtSite = userAilments.filter(ailment => ailment.siteID === selectedSite);
-      const chargersWithIssues = new Set(issuesAtSite.map(ailment => ailment.chargerID));
-      setChargerIssueCount(chargersWithIssues.size); 
-      console.log("Issues at site: ", issuesAtSite); // Check if this returns the correct issues
-      setSiteAilments(issuesAtSite);
-    }
+    const siteAilments = selectedSite ? userAilments.filter(ailment => ailment.siteID === selectedSite) : [];
+    const chargersWithIssues = new Set(siteAilments.map(ailment => ailment.chargerID));
 
+    setUserData({
+      ailments: userAilments,
+      sitesWithIssues: sites,
+      chargerIssueCount: chargersWithIssues.size,
+      siteAilments: siteAilments
+    });
 
     setLoading(false);
-    
-  }, [selectedSite, ailmentsData, storedUsername]);
-  
+  }, [selectedSite, storedUsername]);
 
   const handleLogout = () => {
-    localStorage.removeItem('userToken'); // Clear token
-    localStorage.removeItem('username'); // Clear stored username
-    router.push('/login'); // Redirect to login page
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('username');
+    router.push('/login');
   };
 
   if (loading) {
     return <div>Loading...</div>;
   }
-  
-  const chargerOptions = ailmentsData
-    .filter(ailment => ailment.siteID === selectedSite)
-    .map(ailment => ailment.chargerID)
-    .filter((value, index, self) => self.indexOf(value) === index);
-  
+
   return (
     <div className="container">
       <main>
-      <SummaryStats data={summaryData} />
-      <div className="site-selection">
-        <SiteListView sites={sitesWithIssues} onSelectSite={setSelectedSite} />
-        {selectedSite && <SiteSummaryStats site={selectedSite} chargerIssueCount={chargerIssueCount} />}
+        <SummaryStats ailments={userData.ailments} />
+        <div className="site-selection">
+        <SiteListView sites={userData.sitesWithIssues} onSelectSite={setSelectedSite} />
+        {selectedSite && <SiteSummaryStats site={selectedSite} chargerIssueCount={userData.chargerIssueCount} />}
         <div className="charger-grid">
           {selectedSite && (
-            <ChargerGrid
-              ailments={siteAilments}
-              onSelectCharger={handleChargerSelection}
-            />
-          )}
+        <ChargerGrid ailments={userData.siteAilments} onSelectCharger={setSelectedChargerID} />)}
         </div>
-      </div>
-      {selectedChargerID && <ChargerDetails ailments={ailments} selectedSite={selectedSite} selectedCharger={selectedChargerID} />}
-    
-      <div className="info-boxes">
-        <div className="info-box">
-          <h2>Charger Status Summary</h2>
-          <div>Total Chargers: {ailmentsData.length}</div>
-          <div>Chargers in Use: {ailmentsData.filter(ailment => ailment.status === 'in use').length}</div>
-          <div>Chargers Available: {ailmentsData.filter(ailment => ailment.status === 'available').length}</div>
-          <div>Chargers Under Maintenance: {ailmentsData.filter(ailment => ailment.status === 'maintenance').length}</div>
         </div>
-        <div className="info-box">
-          <h2>Recent Activity</h2>
-          <ul>
-            {siteAilments.map(ailment => (
-              <li key={ailment.id}>
-                {ailment.date}: {ailment.issue} - {ailment.resolved ? 'Resolved' : 'Outstanding'}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="info-box">
-          <h2>Quick Actions</h2>
-          <button>Add New Charger</button>
-          <button>Schedule Maintenance</button>
-          <button>Generate Report</button>
-        </div>
-      </div>
-    </main>
-    <style jsx>{`
+        {selectedChargerID && <ChargerDetails ailments={ailmentsData} selectedSite={selectedSite} selectedCharger={selectedChargerID} />}
+      </main>
+      <style jsx>{`
         .container {
           display: flex;
           flex-direction: column;
@@ -271,6 +184,8 @@ export default function Home() {
           background-color: #f0f0f0;
         }
       `}</style>
-       </div>
+    </div>
   );
-}
+};
+
+export default Home;

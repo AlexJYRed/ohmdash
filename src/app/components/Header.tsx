@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 
 const Header = ({ username, onLogout, onToggleSidebar, sidebarOpen }) => {
     return (
@@ -26,7 +26,7 @@ const Header = ({ username, onLogout, onToggleSidebar, sidebarOpen }) => {
           <div style={{ width: '35px', height: '5px', backgroundColor: 'white', margin: '6px 0', transition: '0.4s' }}></div>
           <div style={{ width: '35px', height: '5px', backgroundColor: 'white', margin: '6px 0', transition: '0.4s' }}></div>
         </button>
-        <h1>OhmEV Dashboard - Welcome, {username}</h1>
+        <h3>OhmEV Dashboard - Welcome, {username}</h3>
         <button onClick={onLogout} className="logout-button" style={{
             backgroundColor: 'transparent',
             border: 'none',

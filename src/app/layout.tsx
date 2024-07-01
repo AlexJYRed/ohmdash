@@ -4,12 +4,14 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import React, { useState, useEffect } from 'react';
 import { Inter } from "next/font/google";
+import {useRouter} from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const RootLayout = ({ children, user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [username, setUsername] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -25,6 +27,7 @@ const RootLayout = ({ children, user }) => {
     localStorage.removeItem('userToken');
     localStorage.removeItem('username');
     // Redirect to login or perform other cleanup
+    router.push("/login");
   };
 
   const toggleSidebar = () => {
